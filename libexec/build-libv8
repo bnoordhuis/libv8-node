@@ -37,7 +37,15 @@ make BUILDTYPE="${BUILDTYPE}" "out/Makefile"
 
 # shellcheck disable=SC2154 # these variables are defined by `eval`ing the output of the platform script above
 if [ "$host_platform" != "$target_platform" ] && [ "${target_platform%%-*}" = "aarch64"  ]; then
-	find . -iname "*.host.mk" -exec sed -i '/-msign-return-address/d' {} ';'
+	find . -iname "*.host.mk" -exec sed -i '/-msign-return-address /d' {} ';'
+fi
+
+# workaround for clang 15 making -Wenum-constexpr-conversion a default and an error
+# (if the host isn't arm64, no such error occurs)
+
+# shellcheck disable=SC2154 # these variables are defined by `eval`ing the output of the platform script above
+if [ "${target_platform%%-*}" = "arm64"  ]; then
+    find . \( -iname "*.host.mk" -or -iname "*.target.mk" \) -exec perl -pi -e 's/^(CFLAGS_(?:Release|Debug) := )([\\])/\1-Wno-enum-constexpr-conversion \2/' {} ';'
 fi
 
 export PATH="${PWD}/out/tools/bin:${PATH}"

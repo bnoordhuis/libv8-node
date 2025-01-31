@@ -336,8 +336,12 @@ jobs:
       - name: Test with mini_racer
         run: |
           export BUNDLE_FORCE_RUBY_PLATFORM=y
-          git clone https://github.com/rubyjs/mini_racer.git test/mini_racer --depth 1
+          mkdir -p test/mini_racer
           cd test/mini_racer
+          git init
+          git remote add origin https://github.com/bnoordhuis/mini_racer.git
+          git fetch --depth 1 origin ca55e826ba7c91b22efd84d281ede1f680e38b3d
+          git checkout FETCH_HEAD
           ruby -i -ne '$_ =~ /^\s+LIBV8_NODE_VERSION/ ? print("  LIBV8_NODE_VERSION = \"${{ needs.build-ruby.outputs.GEM_VERSION }}\"\n") : print' lib/mini_racer/version.rb
           ruby -i -ne '$_ =~ /spec.required_ruby_version/ ? "" : print' mini_racer.gemspec
           bundle install
@@ -368,8 +372,12 @@ jobs:
         run: gem install pkg/libv8-node-${{ needs.build-darwin.outputs.GEM_VERSION }}-${{ steps.set-metadata.outputs.GEM_PLATFORM }}.gem
       - name: Test with mini_racer
         run: |
-          git clone https://github.com/rubyjs/mini_racer.git test/mini_racer --depth 1
+          mkdir -p test/mini_racer
           cd test/mini_racer
+          git init
+          git remote add origin https://github.com/bnoordhuis/mini_racer.git
+          git fetch --depth 1 origin ca55e826ba7c91b22efd84d281ede1f680e38b3d
+          git checkout FETCH_HEAD
           ruby -i -ne '$_ =~ /^\s+LIBV8_NODE_VERSION/ ? print("  LIBV8_NODE_VERSION = \"${{ needs.build-darwin.outputs.GEM_VERSION }}\"\n") : print' lib/mini_racer/version.rb
           ruby -i -ne '$_ =~ /spec.required_ruby_version/ ? "" : print' mini_racer.gemspec
           bundle install
@@ -448,8 +456,12 @@ jobs:
         run: docker exec -w "${PWD}" ${{ steps.container.outputs.id }} gem install pkg/libv8-node-${{ needs.build-linux.outputs.GEM_VERSION }}-${{ steps.set-metadata.outputs.GEM_PLATFORM }}.gem
       - name: Test with mini_racer
         run: |
-          git clone https://github.com/rubyjs/mini_racer.git test/mini_racer --depth 1
+          mkdir -p test/mini_racer
           cd test/mini_racer
+          git init
+          git remote add origin https://github.com/bnoordhuis/mini_racer.git
+          git fetch --depth 1 origin ca55e826ba7c91b22efd84d281ede1f680e38b3d
+          git checkout FETCH_HEAD
           ruby -i -ne '$_ =~ /^\s+LIBV8_NODE_VERSION/ ? print("  LIBV8_NODE_VERSION = \"${{ needs.build-linux.outputs.GEM_VERSION }}\"\n") : print' lib/mini_racer/version.rb
           ruby -i -ne '$_ =~ /spec.required_ruby_version/ ? "" : print' mini_racer.gemspec
           docker exec -w "${PWD}" ${{ steps.container.outputs.id }} bundle install
